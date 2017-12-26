@@ -40,6 +40,8 @@ function IsVictory() {
 export const Bigger = Game({
   setup: () => ({
     // cells: Array(9).fill(null),
+    deckA: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    deckB: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     cardA: 0,
     cardB: 0
   }),
@@ -59,13 +61,20 @@ export const Bigger = Game({
       let cardA = G.cardA;
       let cardB = G.cardB;
 
+      let deckA = G.deckA;
+      let deckB = G.deckB;
+
       if (ctx.currentPlayer == 0) {
         cardA = card;
+        deckA[card-1] = 'casted';
       } else {
         cardB = card;
+        deckB[card-1] = 'casted';
       }
 
-      return {...G, cardA, cardB}
+      // console.log("deck A", deckA)
+
+      return {...G, deckA, deckB, cardA, cardB}
     }
   },
 
@@ -79,6 +88,7 @@ export const Bigger = Game({
       }
     }
     return null
+    // return ctx.turn > 0?  ctx.currentPlayer : null;
 
   }
 });
@@ -90,6 +100,7 @@ export class Board extends React.Component {
     this.state = {
       mynum: 0,
     }
+    this.setNumber = this.setNumber.bind(this);
   }
   static propTypes = {
     G:        PropTypes.any.isRequired,
@@ -105,7 +116,9 @@ export class Board extends React.Component {
     this.props.endTurn();
   }
 
-  changeNumber = (e) => this.setState({ mynum: e.target.value });
+  setNumber = (mynum) => this.setState({ mynum});
+
+  // changeNumber = (e) => this.setState({ mynum: e.target.value });
 
   render() {
 
@@ -114,14 +127,34 @@ export class Board extends React.Component {
       winner = <div id='winner'>Winner: {this.props.ctx.winner}</div>;
     }
 
+    const deck = this.props.ctx.currentPlayer == 0 ?
+      this.props.G.deckA.filter(e => e != 'casted') :
+      this.props.G.deckB.filter(e => e != 'casted');
+
+    const choices = (deck.map((card) => (
+      <div key={card}>  
+      <button  onClick={(e)=>{
+        e.preventDefault();
+        this.setNumber(card+1);
+        }} >No. {card+1}</button>
+      </div>
+      )
+    ))
+
     return (
       <div>
         <form>
-          <div>
+          {/* <div>
             Pick a number between 1 to 10
-          </div>
-        <input name="mynum" onChange={this.changeNumber.bind(this)}  type="number" min={1} max = {10} />
+          </div> */}
+
+       <p>Player {this.props.ctx.currentPlayer}</p>   
+                
+      {choices}
+        {/* <input disabled={true} name="mynum" value={this.state.mynum}  type="number" min={1} max = {10} /> */}
+        <p>{this.state.mynum}</p>
         <input type="submit" value="Go" onClick={(e)=>this.sendNumber(e)} />
+      
        </form>
        
         <p> Card A: {this.props.G.cardA} </p>
