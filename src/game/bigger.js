@@ -79,7 +79,6 @@ export const Bigger = Game({
       }
     }
     return null
-    // return ctx.turn > 0?  ctx.currentPlayer : null;
 
   }
 });
