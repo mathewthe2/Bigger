@@ -70,7 +70,17 @@ export const Bigger = Game({
   },
 
   victory: (G, ctx) => {
-    return IsVictory() ? ctx.currentPlayer : null;
+    console.log(ctx.currentPlayer);
+    if (ctx.turn > 0) {
+      if (G.cardA > G.cardB) {
+        return 0
+      } else {
+        return 1
+      }
+    }
+    return null
+    // return ctx.turn > 0?  ctx.currentPlayer : null;
+
   }
 });
 
@@ -100,6 +110,11 @@ export class Board extends React.Component {
 
   render() {
 
+    let winner = '';
+    if (this.props.ctx.winner !== null) {
+      winner = <div id='winner'>Winner: {this.props.ctx.winner}</div>;
+    }
+
     return (
       <div>
         <form>
@@ -112,6 +127,8 @@ export class Board extends React.Component {
        
         <p> Card A: {this.props.G.cardA} </p>
         <p> Card B: {this.props.G.cardB} </p>
+
+        {winner}
 
       </div>
     );
